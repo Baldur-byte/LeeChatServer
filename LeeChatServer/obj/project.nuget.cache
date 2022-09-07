@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "JU7gxBXczD9wPSTMWsXVE8yeUaSbzyCEyPll42mXkYMQ4mNKtQ2OD5FhHx8qbo6wk5LrT9IRJWwEOQQ9aSw9zA==",
+  "dgSpecHash": "hUHBNQziEWGhb88m/y+OHx7YeHcnZ5KG0VubRvph0Co4WH4wvqXv02mdSVJjpqkHxAhlnBeUcxP6JGe0bPvJ+Q==",
   "success": true,
   "projectFilePath": "D:\\GameServer\\LeeChatServer\\LeeChatServer\\LeeChatServer.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\auus\\.nuget\\packages\\json.net\\1.0.33\\json.net.1.0.33.nupkg.sha512",
+    "C:\\Users\\auus\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
   "logs": []
 }
