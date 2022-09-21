@@ -26,8 +26,7 @@ namespace LeeChatServer
         private void LoginCallBack(Player player, byte[] data)
         {
             Console.WriteLine($"接收到登录请求---(From: Player{player.id}  {NetworkUtils.GetCurrentTime()})");
-            LoginCS loginCS = new LoginCS();
-            loginCS = NetworkUtils.GetProto(loginCS, data) as LoginCS;
+            LoginCS loginCS = LoginCS.Parser.ParseFrom(data);
 
             Console.WriteLine("验证用户ID和密码...");
             player.clientSocket.Send(MessageID.LoginSC, LoginMethod(loginCS).ToByteArray());
@@ -36,8 +35,7 @@ namespace LeeChatServer
         private void RegisterCallBack(Player player, byte[] data)
         {
             Console.WriteLine($"接收到注册请求---(From: Player{player.id}  {NetworkUtils.GetCurrentTime()})");
-            RegisterCS registerCS = new RegisterCS();
-            registerCS = NetworkUtils.GetProto(registerCS, data) as RegisterCS;
+            RegisterCS registerCS = RegisterCS.Parser.ParseFrom(data);
 
             Console.WriteLine("验证用户ID和密码...");
             player.clientSocket.Send(MessageID.RegisterSC, RegisterMethod(registerCS).ToByteArray());
@@ -90,19 +88,19 @@ namespace LeeChatServer
         private LoginSC LoginMethod(LoginCS loginCS)
         {
             LoginSC loginSC = new LoginSC();
-            if (!JsonTools.isIdExist(loginCS.Uuid))
+            if (!DataManager.isIdExist(loginCS.Uuid))
             {
                 loginSC.Result = false;
                 Console.WriteLine($"用户{loginCS.Uuid}不存在！");
                 return loginSC;
             }
-            if (!JsonTools.CheckPassword(loginCS.Uuid, loginCS.Password))
+            if (!DataManager.CheckPassword(loginCS.Uuid, loginCS.Password))
             {
                 loginSC.Result = false;
                 Console.WriteLine($"用户{loginCS.Uuid}密码错误！");
                 return loginSC;
             }
-            loginSC.Info = JsonTools.GetInfoById(loginCS.Uuid);
+            loginSC.Info = DataManager.GetInfoById(loginCS.Uuid);
             loginSC.Result = true;
             return loginSC;
         }
@@ -110,9 +108,9 @@ namespace LeeChatServer
         private RegisterSC RegisterMethod(RegisterCS registerCS)
         {
             RegisterSC registerSC = new RegisterSC();
-            if (JsonTools.AddUser(registerCS))
+            if (DataManager.AddUser(registerCS))
             {
-                registerSC.Info = JsonTools.GetInfoById(registerCS.Uuid);
+                registerSC.Info = DataManager.GetInfoById(registerCS.Uuid);
                 registerSC.Result = true;
                 return registerSC;
             }

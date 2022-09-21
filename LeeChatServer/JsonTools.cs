@@ -1,46 +1,26 @@
-﻿using Newtonsoft.Json;
-using Protobuf;
-using System;
-using System.IO;
-using System.Xml.Linq;
-
-namespace LeeChatServer
+﻿namespace LeeChatServer
 {
     public static class JsonTools
     {
-        private const string InfoPath = "userinfo.json";
-
-        private static string userInfo;
-
-        private static List<PlayerInfo> userInfoList;
-
         private static bool isOpening = false;
-        private static void Read()
+
+        public static string Read(string filepath)
         {
-            userInfoList = new List<PlayerInfo>();
-            userInfo = "";
+            string json = "";
             while (isOpening)
             {
-                //Console.WriteLine("读文件出错，文件已经打开");
-                //return;
             }
             isOpening = true;
             try
             {
-                if (!File.Exists(InfoPath))
+                if (!File.Exists(filepath))
                 {
                     Console.WriteLine("文件不存在！");
-                    File.Create(InfoPath);
-                    return;
+                    File.Create(filepath);
                 }
-                userInfoList = new List<PlayerInfo>();
-                using (StreamReader sr = new StreamReader(InfoPath))
+                using (StreamReader sr = new StreamReader(filepath))
                 {
-                    userInfo = sr.ReadToEnd();
-                    if(!string.IsNullOrEmpty(userInfo))
-                    {
-                        userInfoList = JsonConvert.DeserializeObject<List<PlayerInfo>>(userInfo);
-                    }
+                    json = sr.ReadToEnd();
                     sr.Close();
                 }
             }
@@ -52,9 +32,11 @@ namespace LeeChatServer
             {
                 isOpening = false;
             }
+
+            return json;
         }
 
-        private static void Write()
+        public static void Write(string filepath, string content)
         {
             while (isOpening)
             {
@@ -64,13 +46,11 @@ namespace LeeChatServer
             isOpening = true;
             try
             {
-                if (File.Exists(InfoPath)) File.Delete(InfoPath);
-                File.Create(InfoPath).Dispose();
-                using (StreamWriter sr = new StreamWriter(InfoPath))
+                if (File.Exists(filepath)) File.Delete(filepath);
+                File.Create(filepath).Dispose();
+                using (StreamWriter sr = new StreamWriter(filepath))
                 {
-                    userInfo = JsonConvert.SerializeObject(userInfoList);
-                    
-                    sr.Write(userInfo);
+                    sr.Write(content);
                     sr.Close();
                 }
             }
@@ -82,64 +62,6 @@ namespace LeeChatServer
             { 
                 isOpening = false; 
             }
-        }
-
-        public static bool isIdExist(string uuid)
-        {
-            Read();
-            if(userInfoList != null)
-                foreach( var info in userInfoList)
-                    if (info.Uuid == uuid) return true;
-            return false;
-        }
-
-        public static bool isNameExist(string name)
-        {
-            Read();
-            if (userInfoList != null)
-                foreach (var info in userInfoList)
-                    if (info.Name == name) return true;
-            return false;
-        }
-
-        public static PlayerInfo GetInfoById(string uuid)
-        {
-            Read();
-            if (userInfoList != null)
-                foreach (var info in userInfoList)
-                    if (info.Uuid == uuid) return info;
-            return null;
-        }
-
-        public static PlayerInfo GetInfoByName(string name)
-        {
-            Read();
-            if (userInfoList != null)
-                foreach (var info in userInfoList)
-                    if (info.Name == name) return info;
-            return null;
-        }
-
-        public static bool CheckPassword(string uuid, string password)
-        {
-            Read();
-            if (userInfoList != null && isIdExist(uuid) && GetInfoById(uuid).Password == password)
-                return true;
-            return false;
-        }
-
-        public static bool AddUser(RegisterCS register)
-        {
-            Read();
-            if (isIdExist(register.Uuid)) return false;
-            PlayerInfo info = new PlayerInfo();
-            info.Uuid = register.Uuid;
-            info.Password = register.Password;
-            info.Name = register.Name;
-            info.IconUrl = "www.baidu.com";
-            userInfoList.Add(info);
-            Write();
-            return true;
         }
     }
 }
